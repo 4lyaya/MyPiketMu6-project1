@@ -18,8 +18,8 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $teacherId = Auth::id(); // id user yang login
-        $stats = $this->dashboardService->getGuruStats($teacherId);
+        $userId = Auth::id(); // id user yang login
+        $stats = $this->dashboardService->getGuruStats($userId);
 
         return view('teacher.dashboard', compact('stats'));
     }

@@ -51,12 +51,12 @@
             </a>
         </nav>
 
-        <div class="absolute bottom-0 w-full p-4 border-t border-indigo-700">
+        {{-- <div class="absolute bottom-0 w-full p-4 border-t border-indigo-700">
             <div class="text-sm text-indigo-200">
                 <p>Login sebagai: <span class="font-semibold">{{ Auth::user()->name }}</span></p>
                 <p class="text-xs mt-1">{{ \Carbon\Carbon::now()->format('d M Y, H:i') }}</p>
             </div>
-        </div>
+        </div> --}}
     </aside>
 
     <!-- Main content -->

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\AbsenceController as TeacherAbsenceController;
+use App\Http\Controllers\PublicAbsenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,11 @@ use App\Http\Controllers\Teacher\AbsenceController as TeacherAbsenceController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// Public Routes (bisa diakses tanpa login) - HARUS di atas auth middleware
+Route::get('/', [PublicAbsenceController::class, 'index'])->name('home');
+Route::get('/absences', [PublicAbsenceController::class, 'index'])->name('public.absences.index');
+Route::get('/absences/{absence}', [PublicAbsenceController::class, 'show'])->name('public.absences.show');
 
 // Rute untuk autentikasi
 Route::middleware('guest')->group(function () {
@@ -73,7 +79,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
-    // Catatan: Route show untuk users sengaja dihilangkan sesuai controller
 });
 
 // Rute untuk guru
@@ -88,11 +93,10 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/absences/{absence}', [TeacherAbsenceController::class, 'show'])->name('absences.show');
     Route::get('/absences/{absence}/edit', [TeacherAbsenceController::class, 'edit'])->name('absences.edit');
     Route::put('/absences/{absence}', [TeacherAbsenceController::class, 'update'])->name('absences.update');
-    // Tidak ada route delete untuk absences guru
 });
 
-// Rute beranda default
-Route::get('/', function () {
+// Redirect untuk user yang sudah login mengakses root
+Route::get('/redirect', function () {
     if (auth()->check()) {
         $user = auth()->user();
 
@@ -104,4 +108,4 @@ Route::get('/', function () {
     }
 
     return redirect()->route('login');
-});
+})->name('redirect');

@@ -21,12 +21,16 @@ class UserController extends Controller
     }
 
     /**
-     * Menampilkan daftar semua user (kecuali admin yang sedang login)
+     * Menampilkan daftar semua user dengan role guru atau admin
+     * User yang sedang login ditampilkan di paling atas
      */
     public function index()
     {
-        $users = User::where('id', '!=', Auth::id()) // Exclude current admin
-            ->latest()
+        $currentUserId = Auth::id();
+
+        $users = User::whereIn('role', ['guru', 'admin'])
+            ->orderByRaw("CASE WHEN id = {$currentUserId} THEN 0 ELSE 1 END")
+            ->orderBy('name')
             ->paginate(10);
 
         return view('admin.users.index', compact('users'));
@@ -37,7 +41,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.users.create');
+        $roles = [
+            'guru' => 'Guru',
+            'admin' => 'Admin'
+        ];
+
+        return view('admin.users.create', compact('roles'));
     }
 
     /**
@@ -45,11 +54,18 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
+        // Validasi role hanya boleh guru atau admin
+        $validated = $request->validated();
+
+        if (!in_array($validated['role'], ['guru', 'admin'])) {
+            return back()->withErrors('Role tidak valid.')->withInput();
+        }
+
         User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
         ]);
 
         return redirect()->route('admin.users.index')
@@ -61,9 +77,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Prevent viewing other admins
-        if ($user->role === 'admin' && $user->id !== Auth::id()) {
-            return back()->withErrors('Tidak bisa melihat detail admin lain.');
+        // Hanya boleh melihat user dengan role guru atau admin
+        if (!in_array($user->role, ['guru', 'admin'])) {
+            return back()->withErrors('User tidak ditemukan.');
         }
 
         return view('admin.users.show', compact('user'));
@@ -74,12 +90,17 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        // Prevent editing other admins
-        if ($user->role === 'admin' && $user->id !== Auth::id()) {
-            return back()->withErrors('Tidak bisa mengedit admin lain.');
+        // Hanya boleh mengedit user dengan role guru atau admin
+        if (!in_array($user->role, ['guru', 'admin'])) {
+            return back()->withErrors('User tidak ditemukan.');
         }
 
-        return view('admin.users.edit', compact('user'));
+        $roles = [
+            'guru' => 'Guru',
+            'admin' => 'Admin'
+        ];
+
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -87,9 +108,16 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        // Prevent updating other admins
-        if ($user->role === 'admin' && $user->id !== Auth::id()) {
-            return back()->withErrors('Tidak bisa mengupdate admin lain.');
+        // Hanya boleh mengupdate user dengan role guru atau admin
+        if (!in_array($user->role, ['guru', 'admin'])) {
+            return back()->withErrors('User tidak ditemukan.');
+        }
+
+        // Validasi role hanya boleh guru atau admin
+        $validated = $request->validated();
+
+        if (!in_array($validated['role'], ['guru', 'admin'])) {
+            return back()->withErrors('Role tidak valid.')->withInput();
         }
 
         $data = $request->only('name', 'email', 'role');
@@ -109,9 +137,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Prevent deleting other admins
-        if ($user->role === 'admin' && $user->id !== Auth::id()) {
-            return back()->withErrors('Tidak bisa menghapus admin lain.');
+        // Hanya boleh menghapus user dengan role guru atau admin
+        if (!in_array($user->role, ['guru', 'admin'])) {
+            return back()->withErrors('User tidak ditemukan.');
         }
 
         // Prevent self-deletion
