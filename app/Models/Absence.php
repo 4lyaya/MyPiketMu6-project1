@@ -24,7 +24,10 @@ class Absence extends Model
 
     protected $casts = [
         'replaced_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
+
+    public $timestamps = true;
 
     public function absentTeacher()
     {
@@ -40,7 +43,7 @@ class Absence extends Model
     {
         return $this->belongsTo(Classroom::class);
     }
-    
+
     public function getSelectedPeriods(): array
     {
         return PeriodHelper::maskToPeriods($this->periods_mask);
