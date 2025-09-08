@@ -1,109 +1,177 @@
 @extends('layouts.teachers')
 
 @section('title', 'Daftar Absensi')
-@section('breadcrumb', 'Daftar Absensi')
 
 @section('content')
-    <div class="space-y-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Daftar Absensi</h1>
-                <p class="text-gray-600 text-sm mt-1">Kelola data ketidakhadiran mengajar</p>
+                <h1 class="text-2xl font-bold text-gray-900">Daftar Absensi</h1>
+                <p class="text-sm text-gray-500 mt-1">Kelola data absensi Anda</p>
             </div>
             <a href="{{ route('guru.absences.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                <i class="fas fa-plus mr-2 text-sm"></i>Tambah Absensi
+                class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
+                <i class="fas fa-plus"></i>
+                Tambah Absensi
             </a>
         </div>
 
-        <!-- Table -->
-        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <!-- Desktop: Table Card -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
-                        <tr class="text-left text-gray-600">
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider">No</th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider">Tanggal</th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider hidden sm:table-cell">Guru
-                                Absen</th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider">Pengganti</th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider hidden md:table-cell">Kelas
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">No</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Tanggal
                             </th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider">Jam</th>
-                            <th class="px-4 py-3 font-medium text-xs uppercase tracking-wider text-center">Aksi</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Guru Absen
+                            </th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Kelas</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Jam</th>
+                            <th class="px-6 py-3 text-center font-semibold text-gray-700 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-100">
                         @forelse($absences as $absence)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-4 text-gray-900 font-medium">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-4 text-gray-900">
-                                    <div class="font-medium">{{ $absence->replaced_at->format('d/m/Y') }}</div>
-                                    <div class="text-xs text-gray-500 sm:hidden mt-1">
-                                        {{ $absence->absentTeacher->name ?? '-' }}
-                                    </div>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-900">
+                                    {{ ($absences->currentPage() - 1) * $absences->perPage() + $loop->iteration }}
                                 </td>
-                                <td class="px-4 py-4 text-gray-900 hidden sm:table-cell">
-                                    {{ $absence->absentTeacher->name ?? '-' }}
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-900">
+                                    {{ $absence->replaced_at->format('d/m/Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-900">
+                                    {{ $absence->absentTeacher->name ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if ($absence->substituteTeacher)
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle text-xs"></i>
+                                            Digantikan
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                            <i class="fas fa-clock text-xs"></i>
+                                            Menunggu
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-4 py-4 text-gray-900">
-                                    <span class="{{ $absence->substituteTeacher ? 'text-green-600' : 'text-gray-400' }}">
-                                        {{ $absence->substituteTeacher->name ?? 'Belum ada' }}
-                                    </span>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $absence->classroom->name ?? '-' }}
                                 </td>
-                                <td class="px-4 py-4 text-gray-900 hidden md:table-cell">
-                                    {{ $absence->classroom->name ?? '-' }}
-                                </td>
-                                <td class="px-4 py-4">
+                                <td class="px-6 py-4 text-gray-900">
                                     @if ($absence->periods_mask && method_exists($absence, 'getSelectedPeriods'))
                                         <div class="flex flex-wrap gap-1">
                                             @foreach ($absence->getSelectedPeriods() as $period)
-                                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                                <span
+                                                    class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md">
                                                     {{ $period }}
                                                 </span>
                                             @endforeach
                                         </div>
                                     @else
-                                        <span class="text-gray-400 text-sm">-</span>
+                                        <span>-</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-4">
-                                    <div class="flex justify-center space-x-2">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center justify-center gap-2">
                                         <a href="{{ route('guru.absences.show', $absence) }}"
-                                            class="p-2 text-blue-600 hover:text-blue-800 transition-colors"
-                                            title="Lihat Detail">
-                                            <i class="fas fa-eye"></i>
+                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100">
+                                            <i class="fas fa-eye"></i> Lihat
                                         </a>
                                         <a href="{{ route('guru.absences.edit', $absence) }}"
-                                            class="p-2 text-yellow-600 hover:text-yellow-800 transition-colors"
-                                            title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md bg-amber-50 text-amber-700 hover:bg-amber-100">
+                                            <i class="fas fa-edit"></i> Edit
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-12 text-center text-gray-500">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <i class="fas fa-clipboard-list text-3xl text-gray-300 mb-3"></i>
-                                        <p class="text-sm font-medium text-gray-500 mb-1">Belum ada data absensi</p>
-                                        <p class="text-xs text-gray-400">Mulai dengan menambahkan absensi baru</p>
-                                    </div>
+                                <td colspan="7" class="px-6 py-10 text-center text-gray-500">
+                                    <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
+                                    <p>Belum ada data absensi.</p>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if ($absences->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $absences->links('components.pagination') }}
+                </div>
+            @endif
         </div>
 
-        <!-- Pagination -->
-        @if ($absences->hasPages())
-            <div class="bg-white px-4 py-3 rounded-lg border border-gray-200">
-                {{ $absences->links() }}
-            </div>
-        @endif
+        <!-- Mobile: Card List -->
+        <div class="md:hidden space-y-4">
+            @forelse($absences as $absence)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">{{ $absence->absentTeacher->name ?? '-' }}</p>
+                            <p class="text-xs text-gray-500">{{ $absence->replaced_at->format('d/m/Y') }}</p>
+                        </div>
+                        <span
+                            class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
+                        {{ $absence->substituteTeacher ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
+                            <i class="fas {{ $absence->substituteTeacher ? 'fa-check-circle' : 'fa-clock' }} text-xs"></i>
+                            {{ $absence->substituteTeacher ? 'Digantikan' : 'Menunggu' }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
+                        <div>
+                            <span class="text-gray-400">Pengganti:</span>
+                            <p class="font-medium text-gray-800">{{ $absence->substituteTeacher->name ?? 'Belum ada' }}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Kelas:</span>
+                            <p class="font-medium text-gray-800">{{ $absence->classroom->name ?? '-' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        @if ($absence->periods_mask && method_exists($absence, 'getSelectedPeriods'))
+                            @foreach ($absence->getSelectedPeriods() as $period)
+                                <span
+                                    class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md">
+                                    {{ $period }}
+                                </span>
+                            @endforeach
+                        @else
+                            <span class="text-xs text-gray-400">-</span>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('guru.absences.show', $absence) }}"
+                            class="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100">
+                            <i class="fas fa-eye"></i> Lihat
+                        </a>
+                        <a href="{{ route('guru.absences.edit', $absence) }}"
+                            class="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium rounded-md bg-amber-50 text-amber-700 hover:bg-amber-100">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center text-gray-500">
+                    <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
+                    <p>Belum ada data absensi.</p>
+                </div>
+            @endforelse
+
+            @if ($absences->hasPages())
+                <div class="mt-6">
+                    {{ $absences->links('components.pagination') }}
+                </div>
+            @endif
+        </div>
     </div>
 @endsection

@@ -1,266 +1,209 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guru - @yield('title')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
         body {
             font-family: 'Inter', sans-serif;
-        }
-
-        .nav-gradient {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-        }
-
-        .active-menu {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-        }
-
-        .sidebar-transition {
-            transition: all 0.3s ease-in-out;
-        }
-
-        .card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-open {
-                display: block;
-                animation: slideDown 0.3s ease-out;
-            }
-
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
         }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="nav-gradient text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{{ route('guru.dashboard') }}" class="flex items-center gap-3 group">
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- Top Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                <!-- Left: Logo & Toggle -->
+                <div class="flex items-center gap-3">
+                    <button id="sidebar-toggle" class="lg:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <a href="{{ route('guru.dashboard') }}" class="flex items-center gap-2">
                         <div
-                            class="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center p-1.5 border border-white/10 shadow-sm">
-                            <img src="{{ asset('images/school-logo.png') }}" alt="Logo Sekolah"
-                                class="h-7 w-7 object-contain">
+                            class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center text-white shadow">
+                            <i class="fas fa-school"></i>
                         </div>
-                        <div class="hidden sm:flex flex-col">
-                            <span class="text-lg font-semibold text-white group-hover:text-blue-100 transition-colors">
-                                MyPiketMu
-                            </span>
-                            <span class="text-xs text-blue-100/80">Portal Guru</span>
-                        </div>
+                        <span class="hidden sm:inline text-lg font-semibold text-gray-900">MyPiketMu</span>
                     </a>
                 </div>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="{{ route('guru.dashboard') }}"
-                        class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center {{ request()->routeIs('guru.dashboard') ? 'active-menu text-white' : 'text-blue-100 hover:bg-white/10 hover:text-white' }}">
-                        <i class="fas fa-tachometer-alt mr-2 text-sm"></i>
-                        Dashboard
-                    </a>
-                    <a href="{{ route('guru.absences.index') }}"
-                        class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center {{ request()->routeIs('guru.absences.*') ? 'active-menu text-white' : 'text-blue-100 hover:bg-white/10 hover:text-white' }}">
-                        <i class="fas fa-clipboard-list mr-2 text-sm"></i>
-                        Absensi
-                    </a>
-                </div>
-
-                <!-- User Info & Logout -->
-                <div class="flex items-center space-x-3">
-                    <div class="hidden sm:block text-right">
-                        <div class="text-sm font-medium text-white">{{ Auth::user()->name }}</div>
-                        <div class="text-xs text-blue-100/90">{{ Auth::user()->email }}</div>
-                    </div>
-
-                    <!-- User Avatar -->
-                    <div
-                        class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center border border-white/20">
-                        <i class="fas fa-user text-white text-sm"></i>
-                    </div>
-
-                    <!-- Logout Button -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center border border-white/20 backdrop-blur-sm">
-                            <i class="fas fa-sign-out-alt mr-1.5 text-sm"></i>
-                            <span class="hidden sm:inline">Logout</span>
-                        </button>
-                    </form>
-
-                    <!-- Mobile menu button -->
-                    <button type="button" id="mobile-menu-button"
-                        class="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
-                        <i class="fas fa-bars text-lg"></i>
+                <!-- Right: User -->
+                <div class="flex items-center gap-3">
+                    <span class="hidden sm:block text-sm text-gray-600">Hi, <span
+                            class="font-medium text-gray-900">{{ Auth::user()->name }}</span></span>
+                    <button id="user-menu-button" data-dropdown-toggle="user-dropdown"
+                        class="flex items-center justify-center w-9 h-9 rounded-full bg-primary-100 text-primary-700 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <i class="fas fa-user"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu"
-            class="md:hidden hidden bg-blue-700/95 backdrop-blur-sm px-4 py-3 border-t border-blue-600/50">
-            <div class="space-y-2">
+        <!-- User Dropdown -->
+        <div id="user-dropdown"
+            class="hidden z-50 w-48 bg-white rounded-xl shadow-xl border border-gray-200 divide-y divide-gray-100">
+            <div class="px-4 py-3">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                <p class="text-sm text-gray-500 truncate">{{ Auth::user()->email }}</p>
+            </div>
+            <ul class="py-1 text-sm text-gray-700">
+                <li>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                        <i class="fas fa-user-circle w-4"></i> Profil
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                        <i class="fas fa-cog w-4"></i> Pengaturan
+                    </a>
+                </li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt w-4"></i> Keluar
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 lg:translate-x-0">
+        <div class="h-full px-3 pb-4 overflow-y-auto flex flex-col">
+
+            <!-- Nav -->
+            <nav class="space-y-2 flex-1">
                 <a href="{{ route('guru.dashboard') }}"
-                    class="block px-3 py-2.5 rounded-lg text-base font-medium transition-colors {{ request()->routeIs('guru.dashboard') ? 'bg-white/15 text-white' : 'text-blue-100 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-700 group {{ request()->routeIs('guru.dashboard') ? 'bg-primary-50 text-primary-700' : '' }}">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span class="font-medium">Dashboard</span>
                 </a>
                 <a href="{{ route('guru.absences.index') }}"
-                    class="block px-3 py-2.5 rounded-lg text-base font-medium transition-colors {{ request()->routeIs('guru.absences.*') ? 'bg-white/15 text-white' : 'text-blue-100 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fas fa-clipboard-list mr-3"></i>Absensi
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-700 group {{ request()->routeIs('guru.absences.*') ? 'bg-primary-50 text-primary-700' : '' }}">
+                    <i class="fas fa-clipboard-list w-5"></i>
+                    <span class="font-medium">Absensi</span>
                 </a>
-
-                <!-- User Info in Mobile -->
-                <div class="border-t border-blue-600/50 pt-3 mt-3">
-                    <div class="px-3 py-2 text-white text-sm font-medium flex items-center">
-                        <i class="fas fa-user mr-2 text-sm"></i>{{ Auth::user()->name }}
-                    </div>
-                    <div class="px-3 py-2 text-blue-100 text-xs flex items-center">
-                        <i class="fas fa-envelope mr-2 text-sm"></i>{{ Auth::user()->email }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Breadcrumb -->
-    <div class="bg-white border-b border-gray-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <nav class="flex" aria-label="Breadcrumb">
-                <ol class="flex items-center space-x-2 text-sm text-gray-600">
-                    <li>
-                        <a href="{{ route('guru.dashboard') }}"
-                            class="hover:text-blue-600 transition-colors flex items-center">
-                            <i class="fas fa-home mr-1.5 text-xs"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
-                        <span class="text-gray-800 font-medium">@yield('breadcrumb', 'Dashboard')</span>
-                    </li>
-                </ol>
             </nav>
+
+            <!-- Footer Sidebar -->
+            <div class="mt-auto pt-4 border-t border-gray-200">
+                <div class="flex items-center gap-3 px-3 py-2">
+                    <div
+                        class="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                    <div class="leading-tight">
+                        <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</p>
+                        <span class="text-xs text-gray-500">Guru</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <!-- Notifications -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        @if (session('success'))
-            <div class="mb-4 bg-green-50 border border-green-200 rounded-xl p-4 animate-fade-in">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 w-5 h-5 text-green-500">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-green-700 text-sm font-medium">{{ session('success') }}</p>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 animate-fade-in">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 w-5 h-5 text-red-500">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-red-700 text-sm font-medium">{{ session('error') }}</p>
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
+    </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Page Header -->
-        <div class="mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">@yield('title', 'Dashboard Guru')</h1>
-            <p class="text-gray-600 text-sm md:text-base">@yield('subtitle', 'Selamat datang di portal guru MyPiketMu')</p>
-        </div>
+    <main class="lg:ml-64 pt-16 min-h-screen">
+        <div class="p-4 sm:p-6 lg:p-8">
 
-        @yield('content')
-    </main>
+            <!-- Notifications -->
+            @if (session('success'))
+                <div id="alert-success"
+                    class="flex items-center gap-3 p-4 mb-5 text-green-800 rounded-xl bg-green-50 border border-green-200">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-sm font-medium">{{ session('success') }}</span>
+                    <button data-dismiss-target="#alert-success" aria-label="Close"
+                        class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200">
+                        <i class="fas fa-times w-4 h-4"></i>
+                    </button>
+                </div>
+            @endif
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center mb-4 md:mb-0">
-                    <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mr-3">
-                        <img src="{{ asset('images/school-logo.png') }}" alt="Logo Sekolah"
-                            class="h-5 w-5 object-contain">
-                    </div>
-                    <p class="text-sm text-gray-300">
-                        MyPiketMu - Sistem Manajemen Absensi
-                    </p>
+            @if (session('error'))
+                <div id="alert-error"
+                    class="flex items-center gap-3 p-4 mb-5 text-red-800 rounded-xl bg-red-50 border border-red-200">
+                    <i class="fas fa-exclamation-circle text-red-600"></i>
+                    <span class="text-sm font-medium">{{ session('error') }}</span>
+                    <button data-dismiss-target="#alert-error" aria-label="Close"
+                        class="ml-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg p-1.5 hover:bg-red-200">
+                        <i class="fas fa-times w-4 h-4"></i>
+                    </button>
                 </div>
-                <div class="text-sm text-gray-400">
-                    &copy; {{ date('Y') }} All rights reserved
-                </div>
+            @endif
+
+            <!-- Content -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                @yield('content')
             </div>
         </div>
-    </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            mobileMenuButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                mobileMenu.classList.toggle('hidden');
-                mobileMenu.classList.toggle('mobile-menu-open');
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('mobile-menu-open');
-                }
-            });
-
-            // Close menu when clicking outside on mobile
-            if (window.innerWidth < 768) {
-                document.addEventListener('click', function(e) {
-                    if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenu.classList.remove('mobile-menu-open');
-                    }
-                });
-            }
+        // Toggle sidebar
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
         });
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            ['alert-success', 'alert-error'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }, 5000);
     </script>
 </body>
 

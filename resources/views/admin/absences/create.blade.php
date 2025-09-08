@@ -4,113 +4,152 @@
 
 @php
     use App\Helpers\PeriodHelper;
-    $selectedPeriods = old('periods', PeriodHelper::maskToPeriods($absence->periods_mask ?? 0));
+    $selectedPeriods = old('periods', []);
 @endphp
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-6">Tambah Absensi</h1>
+    <div class="max-w-4xl mx-auto">
 
-    <form action="{{ route('admin.absences.store') }}" method="POST" class="space-y-4 bg-white p-6 rounded shadow">
-        @csrf
-
-        {{-- Tanggal --}}
-        <div>
-            <label class="block mb-1">Tanggal</label>
-            <input type="date" name="replaced_at" value="{{ old('replaced_at') }}" class="w-full border px-3 py-2 rounded">
-            @error('replaced_at')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Tambah Absensi</h1>
+            <p class="text-sm text-gray-500 mt-1">Isi formulir berikut untuk mencatat absensi guru</p>
         </div>
 
-        {{-- Guru Absen --}}
-        <div>
-            <label class="block mb-1">Guru Absen</label>
-            <select name="absent_teacher_id" class="w-full border px-3 py-2 rounded">
-                @foreach ($teachers as $teacher)
-                    <option value="{{ $teacher->id }}" {{ old('absent_teacher_id') == $teacher->id ? 'selected' : '' }}>
-                        {{ $teacher->name }}</option>
-                @endforeach
-            </select>
-            @error('absent_teacher_id')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <form action="{{ route('admin.absences.store') }}" method="POST" class="space-y-5">
+                @csrf
 
-        {{-- Guru Pengganti --}}
-        <div>
-            <label class="block mb-1">Guru Pengganti</label>
-            <select name="substitute_teacher_id" class="w-full border px-3 py-2 rounded">
-                <option value="">-- Tidak ada --</option>
-                @foreach ($teachers as $teacher)
-                    <option value="{{ $teacher->id }}"
-                        {{ old('substitute_teacher_id') == $teacher->id ? 'selected' : '' }}>{{ $teacher->name }}</option>
-                @endforeach
-            </select>
-            @error('substitute_teacher_id')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+                <!-- Tanggal -->
+                <div>
+                    <label for="replaced_at" class="block mb-2 text-sm font-medium text-gray-700">Tanggal</label>
+                    <input type="date" id="replaced_at" name="replaced_at" value="{{ old('replaced_at') }}"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('replaced_at') border-red-500 @enderror"
+                        required>
+                    @error('replaced_at')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-        {{-- Kelas --}}
-        <div>
-            <label class="block mb-1">Kelas</label>
-            <select name="classroom_id" class="w-full border px-3 py-2 rounded">
-                @foreach ($classrooms as $classroom)
-                    <option value="{{ $classroom->id }}" {{ old('classroom_id') == $classroom->id ? 'selected' : '' }}>
-                        {{ $classroom->name }}</option>
-                @endforeach
-            </select>
-            @error('classroom_id')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+                <!-- Guru Absen -->
+                <div>
+                    <label for="absent_teacher_id" class="block mb-2 text-sm font-medium text-gray-700">Guru Absen</label>
+                    <select id="absent_teacher_id" name="absent_teacher_id"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('absent_teacher_id') border-red-500 @enderror"
+                        required>
+                        <option value="">-- Pilih Guru --</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}"
+                                {{ old('absent_teacher_id') == $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('absent_teacher_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-        {{-- Jam --}}
-        <div>
-            <label class="block mb-1">Jam Pelajaran</label>
-            <div class="grid grid-cols-5 gap-2">
-                @for ($i = 1; $i <= 10; $i++)
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" name="periods[]" value="{{ $i }}"
-                            {{ in_array($i, $selectedPeriods) ? 'checked' : '' }}>
-                        <span>Jam {{ $i }}</span>
-                    </label>
-                @endfor
-            </div>
-            @error('periods_mask')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+                <!-- Guru Pengganti -->
+                <div>
+                    <label for="substitute_teacher_id" class="block mb-2 text-sm font-medium text-gray-700">Guru
+                        Pengganti</label>
+                    <select id="substitute_teacher_id" name="substitute_teacher_id"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('substitute_teacher_id') border-red-500 @enderror">
+                        <option value="">-- Tidak ada --</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}"
+                                {{ old('substitute_teacher_id') == $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('substitute_teacher_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-        {{-- Alasan --}}
-        <div>
-            <label class="block mb-1">Alasan</label>
-            <select name="reason" class="w-full border px-3 py-2 rounded">
-                <option value="">-- Pilih Alasan --</option>
-                <option value="sakit" {{ old('reason') == 'sakit' ? 'selected' : '' }}>Sakit</option>
-                <option value="alpha" {{ old('reason') == 'alpha' ? 'selected' : '' }}>Alpha</option>
-                <option value="izin" {{ old('reason') == 'izin' ? 'selected' : '' }}>Izin</option>
-                <option value="terlambat" {{ old('reason') == 'terlambat' ? 'selected' : '' }}>Terlambat</option>
-                <option value="tugas_sekolah" {{ old('reason') == 'tugas_sekolah' ? 'selected' : '' }}>Tugas Sekolah
-                </option>
-            </select>
-            @error('reason')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+                <!-- Kelas -->
+                <div>
+                    <label for="classroom_id" class="block mb-2 text-sm font-medium text-gray-700">Kelas</label>
+                    <select id="classroom_id" name="classroom_id"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('classroom_id') border-red-500 @enderror"
+                        required>
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach ($classrooms as $classroom)
+                            <option value="{{ $classroom->id }}"
+                                {{ old('classroom_id') == $classroom->id ? 'selected' : '' }}>
+                                {{ $classroom->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('classroom_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-        {{-- Catatan --}}
-        <div>
-            <label class="block mb-1">Catatan</label>
-            <textarea name="note" rows="3" class="w-full border px-3 py-2 rounded">{{ old('note') }}</textarea>
-            @error('note')
-                <p class="text-red-500 text-sm">{{ $message }}</p>
-            @enderror
-        </div>
+                <!-- Jam Pelajaran -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Jam Pelajaran</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                        @for ($i = 1; $i <= 10; $i++)
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="periods[]" value="{{ $i }}"
+                                    {{ in_array($i, $selectedPeriods) ? 'checked' : '' }}
+                                    class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                                <span class="text-sm text-gray-700">Jam {{ $i }}</span>
+                            </label>
+                        @endfor
+                    </div>
+                    @error('periods')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-        <div class="flex justify-end space-x-3">
-            <a href="{{ route('admin.absences.index') }}" class="px-4 py-2 bg-gray-300 rounded">Batal</a>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Simpan</button>
+                <!-- Alasan -->
+                <div>
+                    <label for="reason" class="block mb-2 text-sm font-medium text-gray-700">Alasan</label>
+                    <select id="reason" name="reason"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('reason') border-red-500 @enderror">
+                        <option value="">-- Pilih Alasan --</option>
+                        <option value="sakit" {{ old('reason') == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                        <option value="alpha" {{ old('reason') == 'alpha' ? 'selected' : '' }}>Alpha</option>
+                        <option value="izin" {{ old('reason') == 'izin' ? 'selected' : '' }}>Izin</option>
+                        <option value="terlambat" {{ old('reason') == 'terlambat' ? 'selected' : '' }}>Terlambat</option>
+                        <option value="tugas_sekolah" {{ old('reason') == 'tugas_sekolah' ? 'selected' : '' }}>Tugas
+                            Sekolah</option>
+                    </select>
+                    @error('reason')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Catatan -->
+                <div>
+                    <label for="note" class="block mb-2 text-sm font-medium text-gray-700">Catatan</label>
+                    <textarea id="note" name="note" rows="3"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('note') border-red-500 @enderror"
+                        placeholder="Tambahkan catatan tambahan (opsional)">{{ old('note') }}</textarea>
+                    @error('note')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                    <a href="{{ route('admin.absences.index') }}"
+                        class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                        <i class="fas fa-arrow-left"></i>
+                        Batal
+                    </a>
+                    <button type="submit"
+                        class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
+                        <i class="fas fa-save"></i>
+                        Simpan
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 @endsection

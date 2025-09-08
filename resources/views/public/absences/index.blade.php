@@ -29,35 +29,13 @@
 
                     <!-- Title -->
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4 leading-tight">
-                        Daftar <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Absensi
-                            Guru</span>
+                        Daftar <span class="text-blue-600">Absensi Guru</span>
                     </h1>
 
                     <!-- Description -->
                     <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
                         Informasi ketidakhadiran dan penggantian jam mengajar secara real-time
                     </p>
-
-                    <!-- Stats bar (visible on larger screens) -->
-                    {{-- <div class="hidden md:flex justify-center items-center gap-6 mt-8 pt-6 border-t border-gray-100">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                            <span class="text-sm text-gray-600"><span
-                                    class="font-semibold text-gray-800">{{ $totalAbsences }}</span> Total Absensi</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                            <span class="text-sm text-gray-600"><span
-                                    class="font-semibold text-gray-800">{{ $totalSubstitutions }}</span> Guru
-                                Pengganti</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
-                            <span class="text-sm text-gray-600"><span
-                                    class="font-semibold text-gray-800">{{ $uniqueTeachers }}</span> Guru Absen</span>
-                        </div>
-                    </div> --}}
                 </div>
             </div>
         </div>
@@ -172,7 +150,7 @@
                         <tr>
                             <th
                                 class="px-6 py-4 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider whitespace-nowrap">
-                                Tanggal
+                                Tanggal diBuat
                             </th>
                             <th
                                 class="px-6 py-4 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider whitespace-nowrap">
@@ -358,7 +336,7 @@
                         </p>
                         @if ($absences->hasPages())
                             <div class="flex items-center">
-                                {{ $absences->appends(request()->query())->links('pagination::simple-tailwind') }}
+                                {{ $absences->appends(request()->query())->links('components.pagination') }}
                             </div>
                         @endif
                     </div>
@@ -369,7 +347,7 @@
         <!-- Pagination -->
         @if ($absences->hasPages())
             <div class="bg-white px-5 py-4 rounded-xl shadow-sm border border-gray-100">
-                {{ $absences->appends(request()->query())->links('pagination::tailwind') }}
+                {{ $absences->appends(request()->query())->links('components.pagination') }}
             </div>
         @endif
 

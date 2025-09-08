@@ -1,98 +1,117 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informasi Absensi - @yield('title')</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col">
-    {{-- Header --}}
-    <header class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 shadow-xl relative overflow-hidden">
-        <!-- Background decorative elements -->
-        <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
-        <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
-        <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-indigo-500/20 rounded-full"></div>
+<body class="bg-gray-50 font-sans text-gray-800">
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex justify-between items-center py-4 md:py-5">
+    <!-- Top Bar -->
+    <header class="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{{ route('login') }}"
-                        class="flex items-center gap-3 group transform transition-transform hover:scale-105">
-                        <div class="relative">
-                            <div
-                                class="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl p-2 flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 shadow-lg border border-white/10">
-                                <img src="{{ asset('images/school-logo.png') }}" alt="Logo Sekolah"
-                                    class="h-8 w-8 object-contain">
-                            </div>
-                            <div
-                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-blue-800 shadow-sm">
-                            </div>
-                        </div>
-                        <div class="flex flex-col">
-                            <span
-                                class="text-lg md:text-xl font-bold text-white group-hover:text-blue-100 transition-colors">
-                                MyPiketMu6
-                            </span>
-                            <span class="text-xs text-blue-100/80 mt-0.5">Sistem Informasi Absensi</span>
-                        </div>
-                    </a>
-                </div>
+                <a href="{{ route('login') }}" class="flex items-center gap-3 hover:opacity-90 transition">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <img src="{{ asset('images/school-logo.png') }}" alt="Logo Sekolah"
+                            class="h-6 w-6 object-contain">
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold">MyPiketMu</p>
+                        <p class="text-xs text-primary-100">Sistem Informasi Absensi</p>
+                    </div>
+                </a>
 
-                <!-- Waktu Real Time -->
-                <div id="clock"
-                    class="text-white font-semibold text-sm md:text-base bg-white/10 px-3 py-1.5 rounded-lg shadow-sm">
-                    <!-- Jam akan muncul disini -->
-                </div>
+                <!-- Clock -->
+                <div id="clock" class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-medium"></div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Notifications -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Alerts -->
         @if (session('success'))
-            <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <div class="flex items-center">
-                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                    <p class="text-green-700 text-sm">{{ session('success') }}</p>
-                </div>
+            <div id="alert-success"
+                class="flex items-center gap-3 p-4 mb-6 text-green-800 rounded-xl bg-green-50 border border-green-200">
+                <i class="fas fa-check-circle text-green-600"></i>
+                <span class="text-sm font-medium">{{ session('success') }}</span>
+                <button data-dismiss-target="#alert-success" aria-label="Close"
+                    class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200">
+                    <i class="fas fa-times w-4 h-4"></i>
+                </button>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
-                    <p class="text-red-700 text-sm">{{ session('error') }}</p>
-                </div>
+            <div id="alert-error"
+                class="flex items-center gap-3 p-4 mb-6 text-red-800 rounded-xl bg-red-50 border border-red-200">
+                <i class="fas fa-exclamation-circle text-red-600"></i>
+                <span class="text-sm font-medium">{{ session('error') }}</span>
+                <button data-dismiss-target="#alert-error" aria-label="Close"
+                    class="ml-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg p-1.5 hover:bg-red-200">
+                    <i class="fas fa-times w-4 h-4"></i>
+                </button>
             </div>
         @endif
 
         @yield('content')
     </main>
 
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            mobileMenuButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        });
-
+        // Real-time clock
         function updateClock() {
             const options = {
                 timeZone: 'Asia/Jakarta',
@@ -104,7 +123,15 @@
             document.getElementById('clock').textContent = now + ' WIB';
         }
         setInterval(updateClock, 1000);
-        updateClock(); // panggil langsung saat pertama
+        updateClock();
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            ['alert-success', 'alert-error'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }, 5000);
     </script>
 </body>
 
