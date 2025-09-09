@@ -150,6 +150,10 @@
                         <tr>
                             <th
                                 class="px-6 py-4 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider whitespace-nowrap">
+                                No
+                            </th>
+                            <th
+                                class="px-6 py-4 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider whitespace-nowrap">
                                 Tanggal diBuat
                             </th>
                             <th
@@ -177,6 +181,11 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($absences as $absence)
                             <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="font-medium text-gray-900 text-sm">
+                                        {{ ($absences->currentPage() - 1) * $absences->perPage() + $loop->iteration }}
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="font-medium text-gray-900 text-sm">
                                         {{ $absence->created_at ? $absence->created_at->format('d/m/Y') : 'Tanggal tidak valid' }}
@@ -327,7 +336,7 @@
             </div>
 
             <!-- Table Footer -->
-            @if ($absences->isNotEmpty())
+            {{-- @if ($absences->isNotEmpty())
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
                         <p class="text-xs text-gray-600">
@@ -341,7 +350,7 @@
                         @endif
                     </div>
                 </div>
-            @endif
+            @endif --}}
         </div>
 
         <!-- Pagination -->

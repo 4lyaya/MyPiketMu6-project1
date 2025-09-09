@@ -59,7 +59,7 @@ class PublicAbsenceController extends Controller
             $statsQuery->whereDate('created_at', $today);
         }
 
-        $absences = $query->paginate(10);
+        $absences = $query->paginate(5);
 
         // Hitung statistik berdasarkan filter yang sama
         $totalAbsences = $statsQuery->count();

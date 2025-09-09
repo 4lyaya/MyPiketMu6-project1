@@ -38,7 +38,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">No</th>
-                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Tanggal
+                            <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Tanggal Dibuat
                             </th>
                             <th class="px-6 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider">Guru Absen
                             </th>
@@ -57,7 +57,7 @@
                                     {{ ($absences->currentPage() - 1) * $absences->perPage() + $loop->iteration }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-900">
-                                    {{ $absence->replaced_at ? \Carbon\Carbon::parse($absence->replaced_at)->format('d M Y') : '-' }}
+                                    {{ $absence->replaced_at ? \Carbon\Carbon::parse($absence->created_at)->format('d M Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-900">
                                     {{ $absence->absentTeacher->name ?? '-' }}</td>

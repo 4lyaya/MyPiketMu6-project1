@@ -92,12 +92,13 @@
             </div>
             <ul class="py-1 text-sm text-gray-700">
                 <li>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <a href="{{ route('admin.profile') }}" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                         <i class="fas fa-user-circle w-4"></i> Profil
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <a href="{{ route('admin.settings.about') }}"
+                        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                         <i class="fas fa-cog w-4"></i> Pengaturan
                     </a>
                 </li>
@@ -149,6 +150,12 @@
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-700 group {{ request()->routeIs('admin.users.*') ? 'bg-primary-50 text-primary-700' : '' }}">
                     <i class="fas fa-users w-5"></i>
                     <span class="font-medium">Pengguna</span>
+                </a>
+
+                <a href="{{ route('admin.exports.form') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-700 group {{ request()->routeIs('admin.exports.*') ? 'bg-primary-50 text-primary-700' : '' }}">
+                    <i class="fas fa-file-export w-5"></i>
+                    <span class="font-medium">Ekspor Data</span>
                 </a>
             </nav>
 

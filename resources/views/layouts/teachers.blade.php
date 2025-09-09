@@ -93,13 +93,13 @@
                 <p class="text-sm text-gray-500 truncate">{{ Auth::user()->email }}</p>
             </div>
             <ul class="py-1 text-sm text-gray-700">
-                <li>
+                {{-- <li>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                         <i class="fas fa-user-circle w-4"></i> Profil
                     </a>
-                </li>
+                </li> --}}
                 <li>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <a href="{{ route('guru.settings.about') }}" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                         <i class="fas fa-cog w-4"></i> Pengaturan
                     </a>
                 </li>

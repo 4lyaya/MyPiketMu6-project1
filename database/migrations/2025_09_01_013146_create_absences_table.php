@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('absent_teacher_id');
-            $table->unsignedBigInteger('substitute_teacher_id');
+            $table->unsignedBigInteger('substitute_teacher_id')->nullable();
             $table->unsignedBigInteger('classroom_id');
 
             $table->dateTime('replaced_at')->useCurrent();

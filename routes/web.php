@@ -45,6 +45,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+    // Profile
+    Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Settings
+    Route::get('/settings/about', [App\Http\Controllers\Admin\SettingsController::class, 'about'])->name('settings.about');
+
+    // Export Mpdf
+    Route::get('/exports/form', [App\Http\Controllers\Admin\ExportAbsenceController::class, 'form'])->name('exports.form');
+    Route::post('/exports/export', [App\Http\Controllers\Admin\ExportAbsenceController::class, 'export'])->name('exports.export');
+
     // Kelola Absensi
     Route::get('/absences', [AdminAbsenceController::class, 'index'])->name('absences.index');
     Route::get('/absences/create', [AdminAbsenceController::class, 'create'])->name('absences.create');
@@ -85,6 +97,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
+
+    // Settings
+    Route::get('/settings/about', [App\Http\Controllers\Teacher\SettingsController::class, 'about'])->name('settings.about');
 
     // Kelola Absensi (tanpa delete)
     Route::get('/absences', [TeacherAbsenceController::class, 'index'])->name('absences.index');
