@@ -20,6 +20,7 @@
     <!-- Custom Config -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -44,6 +45,17 @@
         }
     </script>
 
+    <!-- Flicker-free dark-mode -->
+    <script>
+        // 1. Cek localStorage sebelum DOM muncul
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia(
+                '(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -51,10 +63,10 @@
     </style>
 </head>
 
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
 
     <!-- Top Bar -->
-    <header class="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
+    <header class="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
 
@@ -70,8 +82,16 @@
                     </div>
                 </a>
 
-                <!-- Clock -->
-                <div id="clock" class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-medium"></div>
+                <!-- Right: Clock + Dark Toggle -->
+                <div class="flex items-center gap-3">
+                    <!-- Clock -->
+                    <div id="clock" class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-medium"></div>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="text-white hover:text-primary-100 focus:outline-none">
+                        <i id="theme-icon" class="fas fa-moon text-lg"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -82,7 +102,7 @@
         <!-- Alerts -->
         @if (session('success'))
             <div id="alert-success"
-                class="flex items-center gap-3 p-4 mb-6 text-green-800 rounded-xl bg-green-50 border border-green-200">
+                class="flex items-center gap-3 p-4 mb-6 text-green-800 rounded-xl bg-green-50 border border-green-200 dark:bg-green-900/30 dark:border-green-700">
                 <i class="fas fa-check-circle text-green-600"></i>
                 <span class="text-sm font-medium">{{ session('success') }}</span>
                 <button data-dismiss-target="#alert-success" aria-label="Close"
@@ -94,7 +114,7 @@
 
         @if (session('error'))
             <div id="alert-error"
-                class="flex items-center gap-3 p-4 mb-6 text-red-800 rounded-xl bg-red-50 border border-red-200">
+                class="flex items-center gap-3 p-4 mb-6 text-red-800 rounded-xl bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-700">
                 <i class="fas fa-exclamation-circle text-red-600"></i>
                 <span class="text-sm font-medium">{{ session('error') }}</span>
                 <button data-dismiss-target="#alert-error" aria-label="Close"
@@ -132,6 +152,27 @@
                 if (el) el.style.display = 'none';
             });
         }, 5000);
+
+        // Dark mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        function updateIcon() {
+            if (document.documentElement.classList.contains('dark')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+        updateIcon();
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            updateIcon();
+        });
     </script>
 </body>
 

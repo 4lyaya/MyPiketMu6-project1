@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.teachers')
 
 @section('title', 'Preview Absensi')
 @section('subtitle', 'Hasil ekspor')
@@ -26,7 +26,7 @@
 
                     <!-- Preview HTML (aktif jika sedang tidak melihat HTML) -->
                     @if (request('output') !== 'html')
-                        <form action="{{ route('admin.exports.export') }}" method="POST" class="inline">
+                        <form action="{{ route('guru.exports.export') }}" method="POST" class="inline">
                             @csrf
                             <input type="hidden" name="teacher_id" value="{{ $teacher ? $teacher->id : '' }}">
                             <input type="hidden" name="start_date" value="{{ $start ? $start->format('Y-m-d') : '' }}">
@@ -40,7 +40,7 @@
                     @endif
 
                     <!-- Unduh PDF -->
-                    <form action="{{ route('admin.exports.export') }}" method="POST" class="inline">
+                    <form action="{{ route('guru.exports.export') }}" method="POST" class="inline">
                         @csrf
                         <input type="hidden" name="teacher_id" value="{{ $teacher ? $teacher->id : '' }}">
                         <input type="hidden" name="start_date" value="{{ $start ? $start->format('Y-m-d') : '' }}">
@@ -53,7 +53,7 @@
                     </form>
 
                     <!-- Unduh Excel -->
-                    <form action="{{ route('admin.exports.export') }}" method="POST" class="inline">
+                    <form action="{{ route('guru.exports.export') }}" method="POST" class="inline">
                         @csrf
                         <input type="hidden" name="teacher_id" value="{{ $teacher ? $teacher->id : '' }}">
                         <input type="hidden" name="start_date" value="{{ $start ? $start->format('Y-m-d') : '' }}">

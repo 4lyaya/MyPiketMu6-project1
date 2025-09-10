@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.teachers')
 
 @section('title', 'Ekspor Absensi')
 @section('subtitle', 'Pilih guru & rentang tanggal')
@@ -14,7 +14,7 @@
                     absensi.</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.exports.export') }}" class="space-y-6">
+            <form method="POST" action="{{ route('guru.exports.export') }}" class="space-y-6">
                 @csrf
 
                 <!-- Grid Responsive -->

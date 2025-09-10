@@ -1,4 +1,5 @@
 @extends('layouts.teachers')
+
 @section('title', 'Dashboard Guru')
 @section('subtitle', 'Ringkasan aktivitas mengajar Anda')
 
@@ -26,50 +27,55 @@
 
         <!-- Stat Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <!-- Card 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium mb-1">Total Absensi</p>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalAbsences }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Absensi</p>
+                        <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ $totalAbsences }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center">
-                        <i class="fas fa-user-times text-red-600 text-xl"></i>
+                    <div class="w-14 h-14 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-user-times text-red-600 dark:text-red-400 text-xl"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+
+            <!-- Card 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium mb-1">Total Substitusi</p>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalSubstitutions }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Substitusi</p>
+                        <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ $totalSubstitutions }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center">
-                        <i class="fas fa-hands-helping text-green-600 text-xl"></i>
+                    <div class="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-hands-helping text-green-600 dark:text-green-400 text-xl"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+
+            <!-- Card 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium mb-1">Guru Unik</p>
-                        <p class="text-3xl font-bold text-gray-800">{{ $uniqueTeachers }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Guru Unik</p>
+                        <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ $uniqueTeachers }}</p>
                     </div>
-                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center">
-                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Daftar Absensi -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Absensi Terbaru</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Absensi Terbaru</h2>
 
             @if ($absences->isNotEmpty())
                 {{-- Desktop: tabel --}}
                 <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full text-sm">
-                        <thead class="bg-gray-50 text-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                             <tr>
                                 <th class="px-4 py-3 text-left">No</th>
                                 <th class="px-4 py-3 text-left">Tanggal</th>
@@ -80,9 +86,9 @@
                                 <th class="px-4 py-3 text-left">Keterangan</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @foreach ($absences as $a)
-                                <tr>
+                                <tr class="text-gray-800 dark:text-gray-200">
                                     <td class="px-4 py-3">{{ $loop->iteration }}</td>
                                     <td class="px-4 py-3">{{ $a->created_at->format('d/m/Y') }}</td>
                                     <td class="px-4 py-3">{{ $a->absentTeacher->name ?? '-' }}</td>
@@ -92,22 +98,24 @@
                                         @if ($a->periods_mask && method_exists($a, 'getSelectedPeriods'))
                                             <div class="flex flex-wrap gap-1">
                                                 @foreach ($a->getSelectedPeriods() as $period)
-                                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-md">
+                                                    <span
+                                                        class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-md">
                                                         {{ $period }}
                                                     </span>
                                                 @endforeach
                                             </div>
                                         @else
-                                            <span class="text-gray-500">-</span>
+                                            <span class="text-gray-500 dark:text-gray-400">-</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         @if ($a->reason)
-                                            <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-md">
+                                            <span
+                                                class="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-md">
                                                 {{ $a->reason }}
                                             </span>
                                         @else
-                                            <span class="text-gray-500">-</span>
+                                            <span class="text-gray-500 dark:text-gray-400">-</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -119,57 +127,45 @@
                 {{-- Mobile: card --}}
                 <div class="md:hidden space-y-4">
                     @foreach ($absences as $a)
-                        <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2 text-sm">
+                        <div
+                            class="bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
                             <div class="flex justify-between items-start">
-                                <span class="font-semibold text-gray-700">#{{ $loop->iteration }}</span>
-                                <span class="text-gray-600">{{ $a->created_at->format('d/m/Y') }}</span>
+                                <span class="font-semibold">#{{ $loop->iteration }}</span>
+                                <span>{{ $a->created_at->format('d/m/Y') }}</span>
+                            </div>
+                            <div><span class="text-gray-500 dark:text-gray-400">Guru Absen:</span> <span
+                                    class="ml-2 font-medium">{{ $a->absentTeacher->name ?? '-' }}</span></div>
+                            <div><span class="text-gray-500 dark:text-gray-400">Pengganti:</span> <span
+                                    class="ml-2 font-medium">{{ $a->substituteTeacher->name ?? '-' }}</span></div>
+                            <div><span class="text-gray-500 dark:text-gray-400">Kelas:</span> <span
+                                    class="ml-2 font-medium">{{ $a->classroom->name ?? '-' }}</span></div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Jam:</span>
+                                @if ($a->periods_mask && method_exists($a, 'getSelectedPeriods'))
+                                    <div class="inline-flex flex-wrap gap-1 mt-1">
+                                        @foreach ($a->getSelectedPeriods() as $period)
+                                            <span
+                                                class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-md">{{ $period }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-gray-500 dark:text-gray-400">-</span>
+                                @endif
                             </div>
                             <div>
-                                <span class="text-gray-500">Guru Absen:</span>
-                                <span class="ml-2 font-medium text-gray-800">{{ $a->absentTeacher->name ?? '-' }}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Pengganti:</span>
-                                <span
-                                    class="ml-2 font-medium text-gray-800">{{ $a->substituteTeacher->name ?? '-' }}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Kelas:</span>
-                                <span class="ml-2 font-medium text-gray-800">{{ $a->classroom->name ?? '-' }}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Jam:</span>
-                                <span class="ml-2">
-                                    @if ($a->periods_mask && method_exists($a, 'getSelectedPeriods'))
-                                        <div class="inline-flex flex-wrap gap-1 mt-1">
-                                            @foreach ($a->getSelectedPeriods() as $period)
-                                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-md">
-                                                    {{ $period }}
-                                                </span>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <span class="text-gray-500">-</span>
-                                    @endif
-                                </span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Keterangan:</span>
-                                <span class="ml-2">
-                                    @if ($a->reason)
-                                        <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-md">
-                                            {{ $a->reason }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-500">-</span>
-                                    @endif
-                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">Keterangan:</span>
+                                @if ($a->reason)
+                                    <span
+                                        class="ml-2 px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-md">{{ $a->reason }}</span>
+                                @else
+                                    <span class="text-gray-500 dark:text-gray-400">-</span>
+                                @endif
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-8 text-gray-400">
+                <div class="text-center py-8 text-gray-400 dark:text-gray-500">
                     <i class="fas fa-calendar-check text-3xl mb-3"></i>
                     <p class="text-sm">Belum ada data absensi</p>
                 </div>

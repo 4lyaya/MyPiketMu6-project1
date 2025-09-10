@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absence;
@@ -8,7 +8,7 @@ use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Mpdf\Mpdf;
-use App\Exports\AdminAbsenceExport;
+use App\Exports\TeacherAbsenceExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportAbsenceController extends Controller
@@ -16,7 +16,7 @@ class ExportAbsenceController extends Controller
     public function form()
     {
         $teachers = Teacher::orderBy('name')->get();
-        return view('admin.exports.form', compact('teachers'));
+        return view('teacher.exports.form', compact('teachers'));
     }
 
     public function export(Request $request)
@@ -70,7 +70,7 @@ class ExportAbsenceController extends Controller
 
         switch ($output) {
             case 'html':
-                return view('admin.exports.preview', compact('teacher', 'absences', 'start', 'end'));
+                return view('teacher.exports.preview', compact('teacher', 'absences', 'start', 'end'));
 
             case 'xlsx':
                 $fileName = 'absensi' .
@@ -78,11 +78,11 @@ class ExportAbsenceController extends Controller
                     ($start ? '-' . $start->format('Ymd') : '') .
                     ($end ? '-' . $end->format('Ymd') : '') .
                     '.xlsx';
-                return Excel::download(new AdminAbsenceExport($absences), $fileName);
+                return Excel::download(new TeacherAbsenceExport($absences), $fileName);
 
             case 'pdf':
             default:
-                $html = view('admin.exports.pdf', compact('teacher', 'absences', 'start', 'end'))->render();
+                $html = view('teacher.exports.pdf', compact('teacher', 'absences', 'start', 'end'))->render();
                 $mpdf = new Mpdf(['orientation' => 'P']);
                 $mpdf->WriteHTML($html);
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\AbsenceController as TeacherAbsenceController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\PublicAbsenceController;
 
 /*
@@ -51,7 +52,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/profile/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Settings
-    Route::get('/settings/about', [App\Http\Controllers\Admin\SettingsController::class, 'about'])->name('settings.about');
+    Route::get('/', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/theme', [AdminSettingsController::class, 'updateTheme'])->name('settings.theme');
+    Route::post('/date', [AdminSettingsController::class, 'updateDateFormat'])->name('settings.date');
+    Route::get('/about', [AdminSettingsController::class, 'about'])->name('settings.about');
 
     // Export Mpdf
     Route::get('/exports/form', [App\Http\Controllers\Admin\ExportAbsenceController::class, 'form'])->name('exports.form');
@@ -100,6 +104,10 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
 
     // Settings
     Route::get('/settings/about', [App\Http\Controllers\Teacher\SettingsController::class, 'about'])->name('settings.about');
+
+    // Export Mpdf
+    Route::get('/exports/form', [App\Http\Controllers\Teacher\ExportAbsenceController::class, 'form'])->name('exports.form');
+    Route::post('/exports/export', [App\Http\Controllers\Teacher\ExportAbsenceController::class, 'export'])->name('exports.export');
 
     // Kelola Absensi (tanpa delete)
     Route::get('/absences', [TeacherAbsenceController::class, 'index'])->name('absences.index');
