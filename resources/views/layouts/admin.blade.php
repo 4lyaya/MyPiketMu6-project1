@@ -181,11 +181,27 @@
                     <span class="font-medium">Pengguna</span>
                 </a>
 
-                <a href="{{ route('admin.exports.form') }}"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400 group {{ request()->routeIs('admin.exports.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : '' }}">
-                    <i class="fas fa-file-export w-5"></i>
-                    <span class="font-medium">Ekspor Data</span>
-                </a>
+                <!-- Dropdown untuk Ekspor dan Import Data -->
+                <div class="relative">
+                    <button
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400 group {{ request()->routeIs('admin.exports.*', 'admin.import') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : '' }}"
+                        onclick="toggleDropdown(event)">
+                        <i class="fas fa-file w-5"></i>
+                        <span class="font-medium">Data</span>
+                        <i class="fas fa-chevron-down ml-2"></i>
+                    </button>
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg hidden">
+                        <a href="{{ route('admin.exports.form') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400">
+                            <i class="fas fa-file-export mr-2"></i> Ekspor Data
+                        </a>
+                        <a href="{{ route('admin.import') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400">
+                            <i class="fas fa-file-import mr-2"></i> Import Data
+                        </a>
+                    </div>
+                </div>
             </nav>
 
             <!-- Footer Sidebar -->
@@ -221,7 +237,7 @@
                 </div>
             @endif
 
-            @if (session('error'))
+            {{-- @if (session('error'))
                 <div id="alert-error"
                     class="flex items-center gap-3 p-4 mb-5 text-red-800 rounded-xl bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-700">
                     <i class="fas fa-exclamation-circle text-red-600"></i>
@@ -231,7 +247,7 @@
                         <i class="fas fa-times w-4 h-4"></i>
                     </button>
                 </div>
-            @endif
+            @endif --}}
 
             <!-- Content -->
             <div
@@ -272,7 +288,12 @@
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-        }, 5000);
+        }, 3000);
+
+        function toggleDropdown(event) {
+            event.preventDefault();
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        }
     </script>
 </body>
 

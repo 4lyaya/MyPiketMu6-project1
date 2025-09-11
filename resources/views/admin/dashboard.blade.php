@@ -8,13 +8,13 @@
 
         <!-- Info Login -->
         <div
-            class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800 shadow-sm">
+            class="bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-blue-100 dark:border-blue-800 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Selamat datang,
                         {{ auth()->user()->name }}</h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Login sebagai <span
-                            class="font-medium text-indigo-700 dark:text-indigo-400">{{ ucfirst(auth()->user()->role) }}</span>
+                            class="font-medium text-blue-700 dark:text-blue-400">{{ ucfirst(auth()->user()->role) }}</span>
                     </p>
                 </div>
                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ now()->format('l, d F Y') }}</div>

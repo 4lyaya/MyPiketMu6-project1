@@ -2,16 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\AbsenceController as AdminAbsenceController;
-use App\Http\Controllers\Admin\ClassroomController as AdminClassroomController;
-use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
-use App\Http\Controllers\Teacher\AbsenceController as TeacherAbsenceController;
-use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\PublicAbsenceController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\AbsenceController as AdminAbsenceController;
+use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\ClassroomController as AdminClassroomController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Teacher\AbsenceController as TeacherAbsenceController;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,10 +59,22 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/theme', [AdminSettingsController::class, 'updateTheme'])->name('settings.theme');
     Route::post('/date', [AdminSettingsController::class, 'updateDateFormat'])->name('settings.date');
     Route::get('/about', [AdminSettingsController::class, 'about'])->name('settings.about');
+    Route::get('/backup', function () {
+        return view('admin.settings.backup');
+    })->name('settings.backup');
+
+    // Backup Full Data Excel dan Pdf
+    Route::post('/backup/full/{type}', [BackupController::class, 'full'])->name('backup.full');
+    Route::post('/backup/partial/{table}/{type}', [BackupController::class, 'partial'])->name('backup.partial');
 
     // Export Mpdf
     Route::get('/exports/form', [App\Http\Controllers\Admin\ExportAbsenceController::class, 'form'])->name('exports.form');
     Route::post('/exports/export', [App\Http\Controllers\Admin\ExportAbsenceController::class, 'export'])->name('exports.export');
+
+    // Import Excel
+    Route::get('import', [ImportController::class, 'index'])->name('import');
+    Route::post('import/teachers', [ImportController::class, 'importTeachers'])->name('import.teachers');
+    Route::post('import/classrooms', [ImportController::class, 'importClassrooms'])->name('import.classrooms');
 
     // Kelola Absensi
     Route::get('/absences', [AdminAbsenceController::class, 'index'])->name('absences.index');

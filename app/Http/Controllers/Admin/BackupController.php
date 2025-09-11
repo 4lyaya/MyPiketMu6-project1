@@ -12,32 +12,61 @@ use App\Models\Absence;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Mpdf;
+use ZipArchive;
 
 class BackupController extends Controller
 {
-    /* ---------- FULL BACKUP ---------- */
+    /* ---------- FULL BACKUP (ZIP) ---------- */
     public function full(Request $request, $type)
     {
         $teachers = Teacher::with('user')->latest()->get();
         $classrooms = Classroom::latest()->get();
         $absences = Absence::with(['absentTeacher', 'substituteTeacher', 'classroom'])->latest()->get();
 
+        $zip = new ZipArchive;
+        $zipName = 'full-backup-' . now()->format('YmdHis') . '.zip';
+        $zipPath = storage_path('app/backups/' . $zipName);
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) !== TRUE) {
+            return back()->with('error', 'Gagal membuat file ZIP.');
+        }
+
+        /* ---------- EXCEL ---------- */
         if ($type === 'excel') {
-            // Zip-like: satu file Excel dengan 3 sheet
-            return Excel::download(new \App\Exports\FullBackupExport($teachers, $classrooms, $absences), 'full-backup-' . now()->format('YmdHis') . '.xlsx');
+            // 1. Guru
+            $excelGuru = Excel::raw(new TeachersExport, \Maatwebsite\Excel\Excel::XLSX);
+            $zip->addFromString('teachers.xlsx', $excelGuru);
+
+            // 2. Kelas
+            $excelKelas = Excel::raw(new ClassroomsExport, \Maatwebsite\Excel\Excel::XLSX);
+            $zip->addFromString('classrooms.xlsx', $excelKelas);
+
+            // 3. Absensi
+            $excelAbsen = Excel::raw(new AbsencesExport, \Maatwebsite\Excel\Excel::XLSX);
+            $zip->addFromString('absences.xlsx', $excelAbsen);
         }
 
+        /* ---------- PDF ---------- */
         if ($type === 'pdf') {
-            $html = view('exports.pdf.full-backup', compact('teachers', 'classrooms', 'absences'))->render();
-            $mpdf = new Mpdf(['orientation' => 'P']);
-            $mpdf->WriteHTML($html);
-            return $mpdf->Output('full-backup-' . now()->format('YmdHis') . '.pdf', 'D');
+            // 1. Guru
+            $pdfGuru = $this->generatePdf('admin.exports.pdf.teachers', ['data' => $teachers]);
+            $zip->addFromString('teachers.pdf', $pdfGuru);
+
+            // 2. Kelas
+            $pdfKelas = $this->generatePdf('admin.exports.pdf.classrooms', ['data' => $classrooms]);
+            $zip->addFromString('classrooms.pdf', $pdfKelas);
+
+            // 3. Absensi
+            $pdfAbsen = $this->generatePdf('admin.exports.pdf.absences', ['data' => $absences]);
+            $zip->addFromString('absences.pdf', $pdfAbsen);
         }
 
-        return back()->with('error', 'Tipe backup tidak dikenal.');
+        $zip->close();
+
+        return response()->download($zipPath, $zipName)->deleteFileAfterSend(true);
     }
 
-    /* ---------- PER TABEL ---------- */
+    /* ---------- PER TABEL (SINGLE FILE) ---------- */
     public function partial(Request $request, $table, $type)
     {
         $export = match ($table) {
@@ -51,7 +80,15 @@ class BackupController extends Controller
             return back()->with('error', 'Tabel / tipe tidak valid.');
         }
 
-        $fileName = $table . '-' . now()->format('YmdHis') . '.xlsx';
-        return Excel::download($export, $fileName);
+        return Excel::download($export, $table . '-' . now()->format('YmdHis') . '.xlsx');
+    }
+
+    /* ---------- HELPER GENERATE PDF ---------- */
+    private function generatePdf(string $view, array $data): string
+    {
+        $html = view($view, $data)->render();
+        $mpdf = new Mpdf(['orientation' => 'P']);
+        $mpdf->WriteHTML($html);
+        return $mpdf->Output('', 'S'); // Return as string
     }
 }
