@@ -76,7 +76,7 @@
         <div class="absolute top-4 right-4 z-10">
             <button id="theme-toggle"
                 class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none">
-                <i id="theme-icon" class="fas fa-moon text-lg"></i>
+                {{-- <i id="theme-icon" class="fas fa-moon text-lg"></i> --}}
             </button>
         </div>
 
