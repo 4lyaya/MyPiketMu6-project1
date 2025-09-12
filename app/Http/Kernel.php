@@ -6,6 +6,14 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+
+    protected function boot()
+    {
+        parent::boot();
+
+        $this->loadRoutesFrom(base_path('routes/admin.php'));
+        $this->loadRoutesFrom(base_path('routes/teacher.php'));
+    }
     /**
      * The application's global HTTP middleware stack.
      *
